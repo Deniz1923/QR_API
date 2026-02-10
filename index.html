@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code Generator</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        input { padding: 10px; width: 300px; font-size: 16px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        #result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+    <p>Enter a link below to generate a QR code:</p>
+    
+    <input type="text" id="urlInput" placeholder="https://example.com" />
+    <button onclick="getQR()">Generate</button>
+
+    <div id="result">
+        <img id="qrImage" src="" alt="" style="display:none; border: 1px solid #ccc;"/>
+    </div>
+
+    <script>
+        function getQR() {
+            // 1. Get the value the user typed
+            const userInput = document.getElementById('urlInput').value;
+            
+            // 2. Build the API URL (e.g., /api/qr?url=google.com)
+            const apiUrl = "/api/qr?url=" + encodeURIComponent(userInput);
+            
+            // 3. Update the image source
+            const imgTag = document.getElementById('qrImage');
+            imgTag.src = apiUrl;
+            imgTag.style.display = "inline";
+        }
+    </script>
+</body>
+</html>

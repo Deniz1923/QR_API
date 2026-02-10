@@ -4,26 +4,27 @@ import io
 
 app = Flask(__name__)
 
+# --- NEW: Route for the Homepage ---
+@app.route('/')
+def home():
+    # When user visits root URL, send them the HTML file
+    return send_file('index.html')
+
+# --- EXISTING: Route for the API ---
 @app.route('/api/qr', methods=['GET'])
 def generate_qr():
-    # 1. Get the data from the URL (e.g. ?url=google.com)
-    data = request.args.get('url')
+    url = request.args.get('url')
+    
+    if not url:
+        return {"error": "Missing URL parameter"}, 400
 
-    # Check if the user forgot to send a URL
-    if not data:
-        return {"error": "Please provide a url! Example: /api/qr?url=google.com"}, 400
-
-    # 2. Generate the QR Code
-    img = qrcode.make(data)
-
-    # 3. Save the image to "memory" (RAM) instead of a file
-    # Think of this as a virtual file that only exists for a second
-    img_io = io.BytesIO()
-    img.save(img_io, 'PNG')
-    img_io.seek(0) # Reset the file pointer to the beginning
-
-    # 4. Send the image back to the user
-    return send_file(img_io, mimetype='image/png')
+    img = qrcode.make(url)
+    
+    buf = io.BytesIO()
+    img.save(buf)
+    buf.seek(0)
+    
+    return send_file(buf, mimetype='image/png')
 
 if __name__ == '__main__':
     app.run(debug=True)
